@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Defines the BaseModel class, which serves as the foundation for other classes in the HBnB project."""
 
-import models
-from uuid import uuid4
 from datetime import datetime
+from uuid import uuid4
+import models
 
 class BaseModel:
     """Represents the BaseModel of the HBnB project.
@@ -48,10 +48,10 @@ class BaseModel:
         rdict = self.__dict__.copy()
         rdict["created_at"] = self.created_at.isoformat()
         rdict["updated_at"] = self.updated_at.isoformat()
-        rdict["__class__"] = self.__class__.__name()
+        rdict["__class__"] = type(self).__name__
         return rdict
 
     def __str__(self):
         """Return a human-readable string representation of the BaseModel instance."""
-        clname = self.__class__.__name()
+        clname = type(self).__name__
         return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
