@@ -37,7 +37,7 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
 
-     def do_show(self, arg):
+    def do_show(self, arg):
         """Show details of a User instance"""
         args = arg.split()
         if len(args) == 2 and args[0] == "User":
@@ -68,7 +68,7 @@ class HBNBCommand(cmd.Cmd):
             for user in users.values():
                 print(user)
 
-   def do_update(self, arg):
+    def do_update(self, arg):
         """Update attributes of a User instance"""
         args = arg.split()
         if len(args) >= 2 and args[0] == "User":
