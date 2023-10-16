@@ -42,10 +42,7 @@ class HBNBCommand(cmd.Cmd):
         print(new_obj.id)
 
 
-    """The code defines a method called  do_show  that takes in arguments for class name and instance id. It checks if the provided class and instance exist in the storage and 
-    prints the corresponding instance or error messages accordingly.
-    """
-    def do_show(self, arg):
+def do_show(self, arg):
         args = arg.split()
         if len(args) == 0:
             print("** class name missing **")
@@ -64,14 +61,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
 
-"""
- Delete an instance based on class and ID.
 
-Args:
-    arg (str): The class name and instance ID.
-
-"""
-        
        def do_destroy(self, arg):
         args = arg.split()
         if len(args) == 0:
@@ -92,11 +82,7 @@ Args:
         else:
             print("** no instance found **")
 
-"""
-Show all instances or instances of a specific class.
- Args:
-            arg (str): (Optional) The class name.
-"""
+
 
  def do_all(self, arg):
         args = arg.split()
@@ -140,13 +126,7 @@ Show all instances or instances of a specific class.
         for attr, value in attributes.items():
             setattr(obj, attr, value)
         obj.save()
-      
-"""
-Count the number of instances in a class.
 
- Args:
-     arg (str): The class name.
-"""
 def do_count(self, arg):
         args = arg.split()
         if len(args) == 0:
@@ -159,16 +139,10 @@ def do_count(self, arg):
         count = len(globals()[class_name].all())
         print(count)
 
-"""
-Exit the command interpreter.
-"""
 
 def do_quit(self, arg):
         return True
 
-"""
-Exit the command interpreter.
-"""
 def do_EOF(self, arg):
         print()
         return True
