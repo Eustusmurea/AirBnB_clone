@@ -11,13 +11,31 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
+"""
+Retrieve all objects from storage.
+
+ Returns:
+      dict: A dictionary of all stored objects.
+"""
     def all(self):
         return self.__objects
 
+"""
+ Add a new object to storage.
+
+Args:
+ obj: The object to be added to storage.
+"""
+    
     def new(self, obj):
         key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        
         self.__objects[key] = obj
 
+"""
+Save objects to the JSON file.
+"""
+         
     def save(self):
         data = {}
         for key, obj in self.__objects.items():
@@ -25,6 +43,10 @@ class FileStorage:
         with open(self.__file_path, 'w') as file:
             json.dump(data, file)
 
+"""
+Load objects from the JSON file and populate the storage.
+"""
+  
     def reload(self):
         try:
             with open(self.__file_path, 'r') as file:
