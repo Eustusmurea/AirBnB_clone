@@ -7,7 +7,12 @@ import cmd
 from models.base_model import BaseModel
 from models.user import User
 from models import storage
-
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
+import shlex
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -22,69 +27,126 @@ class HBNBCommand(cmd.Cmd):
         It does nothing and simply returns to the prompt.
         """
         pass
-
+    
     def do_create(self, arg):
-        """Create a new User instance"""
-        if arg == "User":
-            new_user = User()
-            new_user.save()
-            print(new_user.id)
-
-        try:
-            new_instance = eval(arg)()
-            new_instance.save()
-            print(new_instance.id)
-        except NameError:
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
             print("** class doesn't exist **")
+            return
+        new_obj = eval(class_name)()
+        new_obj.save()
+        print(new_obj.id)
 
-    def do_show(self, arg):
-        """Show details of a User instance"""
+
+def do_show(self, arg):
         args = arg.split()
-        if len(args) == 2 and args[0] == "User":
-            user_id = args[1]
-            user = models.storage.get(User, user_id)
-            if user is not None:
-                print(user)
-            else:
-                print("** no instance found **")
-                
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        obj_id = args[1]
+        key = "{}.{}".format(class_name, obj_id)
+        if key in storage.all():
+            print(storage.all()[key])
+        else:
+            print("** no instance found **")
 
-    def do_destroy(self, arg):
-        """Destroy a User instance"""
+
+       def do_destroy(self, arg):
         args = arg.split()
-        if len(args) == 2 and args[0] == "User":
-            user_id = args[1]
-            user = models.storage.get(User, user_id)
-            if user is not None:
-                user.delete()
-                models.storage.save()
-            else:
-                print("** no instance found **")
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        obj_id = args[1]
+        key = "{}.{}".format(class_name, obj_id)
+        if key in storage.all():
+            del storage.all()[key]
+            storage.save()
+        else:
+            print("** no instance found **")
 
-    def do_all(self, arg):
-        """Print all User instances"""
-        if arg == "User":
-            users = models.storage.all(User)
-            for user in users.values():
-                print(user)
 
-    def do_update(self, arg):
-        """Update attributes of a User instance"""
+
+ def do_all(self, arg):
         args = arg.split()
-        if len(args) >= 2 and args[0] == "User":
-            user_id = args[1]
-            user = models.storage.get(User, user_id)
-            if user is not None:
-                if len(args) >= 3:
-                    attr_name = args[2]
-                    if len(args) >= 4:
-                        attr_value = args[3]
-                        setattr(user, attr_name, attr_value)
-                        user.save()
-                        return
-                print("** attribute name missing **")
-            else:
-                print("** no instance found **")
+        if len(args) == 0:
+            print([str(obj) for obj in storage.all().values()])
+        else:
+            class_name = args[0]
+            if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+                print("** class doesn't exist **")
+                return
+            print([str(obj) for obj in globals()[class_name].all().values()])
+
+           def do_update(self, arg):
+        args = shlex.split(arg)
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        obj_id = args[1]
+        key = "{}.{}".format(class_name, obj_id)
+        if key not in storage.all():
+            print("** no instance found **")
+            return
+        if len(args) < 3:
+            print("** dictionary missing **")
+            return
+        try:
+            attributes = eval(args[2])
+            if not isinstance(attributes, dict):
+                raise ValueError
+        except (NameError, ValueError, SyntaxError):
+            print("** invalid dictionary format **")
+            return
+        obj = storage.all()[key]
+        for attr, value in attributes.items():
+            setattr(obj, attr, value)
+        obj.save()
+
+def do_count(self, arg):
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+            print("** class doesn't exist **")
+            return
+        count = len(globals()[class_name].all())
+        print(count)
+
+
+def do_quit(self, arg):
+        return True
+
+def do_EOF(self, arg):
+        print()
+        return True
+
 
 
 if __name__ == "__main__":
