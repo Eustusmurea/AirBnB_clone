@@ -27,31 +27,45 @@ class HBNBCommand(cmd.Cmd):
         It does nothing and simply returns to the prompt.
         """
         pass
-    
+
     def do_create(self, arg):
-        args = arg.split()
+        """
+        Create a new instance of a specified class, save it, and print the ID.
+
+        Args:
+            arg (str): The class name.
+
+        Example:
+            create BaseModel
+        """
+        args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
             return
         class_name = args[0]
-        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+        if class_name not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         new_obj = eval(class_name)()
         new_obj.save()
         print(new_obj.id)
 
-
-    """The code defines a method called  do_show  that takes in arguments for class name and instance id. It checks if the provided class and instance exist in the storage and 
-    prints the corresponding instance or error messages accordingly.
-    """
     def do_show(self, arg):
-        args = arg.split()
+        """
+        Print the string representation of an instance based on the class name and ID.
+
+        Args:
+            arg (str): The class name and instance ID.
+
+        Example:
+            show BaseModel 1234-1234-1234
+        """
+        args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
             return
         class_name = args[0]
-        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+        if class_name not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -64,21 +78,22 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
 
-"""
- Delete an instance based on class and ID.
+    def do_destroy(self, arg):
+        """
+        Delete an instance based on class and ID.
 
-Args:
-    arg (str): The class name and instance ID.
+        Args:
+            arg (str): The class name and instance ID.
 
-"""
-        
-       def do_destroy(self, arg):
-        args = arg.split()
+        Example:
+            destroy BaseModel 1234-1234-1234
+        """
+        args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
             return
         class_name = args[0]
-        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+        if class_name not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -92,30 +107,42 @@ Args:
         else:
             print("** no instance found **")
 
-"""
-Show all instances or instances of a specific class.
- Args:
-            arg (str): (Optional) The class name.
-"""
+    def do_all(self, arg):
+        """
+        Print string representations of all instances based on the class name.
 
- def do_all(self, arg):
-        args = arg.split()
+        Args:
+            arg (str): (Optional) The class name.
+
+        Example:
+            all BaseModel
+        """
+        args = shlex.split(arg)
         if len(args) == 0:
             print([str(obj) for obj in storage.all().values()])
         else:
             class_name = args[0]
-            if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+            if class_name not in ["BaseModel", "User"]:
                 print("** class doesn't exist **")
                 return
             print([str(obj) for obj in globals()[class_name].all().values()])
 
-           def do_update(self, arg):
+    def do_update(self, arg):
+        """
+        Update an instance's attribute based on the class name and ID.
+
+        Args:
+            arg (str): The class name, instance ID, attribute name, and attribute value.
+
+        Example:
+            update BaseModel 1234-1234-1234 email "aibnb@mail.com"
+        """
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
             return
         class_name = args[0]
-        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
+        if class_name not in ["BaseModel", "User"]:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -127,53 +154,29 @@ Show all instances or instances of a specific class.
             print("** no instance found **")
             return
         if len(args) < 3:
-            print("** dictionary missing **")
+            print("** attribute name missing **")
             return
-        try:
-            attributes = eval(args[2])
-            if not isinstance(attributes, dict):
-                raise ValueError
-        except (NameError, ValueError, SyntaxError):
-            print("** invalid dictionary format **")
+        if len(args) < 4:
+            print("** value missing **")
             return
+        attr_name = args[2]
+        attr_value = args[3]
         obj = storage.all()[key]
-        for attr, value in attributes.items():
-            setattr(obj, attr, value)
+        setattr(obj, attr_name, attr_value)
         obj.save()
-      
-"""
-Count the number of instances in a class.
 
- Args:
-     arg (str): The class name.
-"""
-def do_count(self, arg):
-        args = arg.split()
-        if len(args) == 0:
-            print("** class name missing **")
-            return
-        class_name = args[0]
-        if class_name not in ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]:
-            print("** class doesn't exist **")
-            return
-        count = len(globals()[class_name].all())
-        print(count)
-
-"""
-Exit the command interpreter.
-"""
-
-def do_quit(self, arg):
+    def do_quit(self, arg):
+        """
+        Exit the command interpreter.
+        """
         return True
 
-"""
-Exit the command interpreter.
-"""
-def do_EOF(self, arg):
+    def do_EOF(self, arg):
+        """
+        Exit the command interpreter.
+        """
         print()
         return True
-
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
