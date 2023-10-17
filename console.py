@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-This module contains the entry point of the command interpreter.
-"""
+"""Defines the HBnB console."""
 import cmd
 import re
 from shlex import split
@@ -32,8 +30,8 @@ def parse(arg):
         retl.append(curly_braces.group())
         return retl
 
-class HBNBCommand(cmd.Cmd):
 
+class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "
     __classes = {
         "BaseModel",
@@ -80,8 +78,7 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, arg):
-        """Usage: create <class>
-        Create a new class instance and print its id.
+        """Create a new class instance and print its id.
         """
         argl = parse(arg)
         if len(argl) == 0:
@@ -109,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
     def do_destroy(self, arg):
-        """Delete a class instance of a given id."""
+        """ Delete a class instance of a given id."""
         argl = parse(arg)
         objdict = storage.all()
         if len(argl) == 0:
@@ -125,7 +122,6 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
 
     def do_all(self, arg):
-        
         """ Display string representations of all instances of a given class.
         If no class is specified, displays all instantiated objects."""
         argl = parse(arg)
@@ -141,7 +137,8 @@ class HBNBCommand(cmd.Cmd):
             print(objl)
 
     def do_count(self, arg):
-        """Retrieve the number of instances of a given class."""
+        """Usage: count <class> or <class>.count()
+        Retrieve the number of instances of a given class."""
         argl = parse(arg)
         count = 0
         for obj in storage.all().values():
@@ -150,9 +147,6 @@ class HBNBCommand(cmd.Cmd):
         print(count)
 
     def do_update(self, arg):
-        """
-        Update a class instance of a given id by adding or updating
-        a given attribute key/value pair or dictionary."""
         argl = parse(arg)
         objdict = storage.all()
 
@@ -195,7 +189,7 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     obj.__dict__[k] = v
         storage.save()
-        print("** instance saved **")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
